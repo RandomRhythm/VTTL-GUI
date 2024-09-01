@@ -300,14 +300,14 @@ Dim boolSaveFeedChange As Boolean
 Private Sub btnAdd_Click()
 If btnAdd.Caption = "Add New Feed" Then
     btnAdd.Caption = "Cancel Feed Add"
-    If FrmFeed.lstFeed.ListIndex <> -1 Then 'we did not just added this in a new  window without selecting in the list
+    If frmFeed.lstFeed.ListIndex <> -1 Then 'we did not just added this in a new  window without selecting in the list
         txtCacheLocation.Text = ""
     End If
-    FrmFeed.lstFeed.ListIndex = -1
+    frmFeed.lstFeed.ListIndex = -1
     lstFeed.Enabled = False
     btnUpdateEntry.Caption = "Add New Feed With Current Values"
     If txtRefresh.Text = "" Then txtRefresh.Text = 24
-    FrmFeed.chkEnabled.Value = 1
+    frmFeed.chkEnabled.Value = 1
 
 Else
     btnAdd.Caption = "Add New Feed"
@@ -399,20 +399,20 @@ selectedText = lstFeed.List(lstFeed.ListIndex)
 pipeArray = txtURL.Text & "|" & "\cache\intel\" & LCase(txtCacheLocation.Text) & "|" & txtFeedString.Text & "|" & intToBoolStr(chkEnabled.Value) & "|" & txtRefresh.Text & "|" & intToBoolStr(ChkIgnoreSSL.Value) & "|" & txtAgeLimit & "|" & ComboCategory
 
     
-If lstFeed.ListIndex = -1 And btnUpdateEntry.Caption = "Add New Feed With Current Values" Then
+    If lstFeed.ListIndex = -1 And btnUpdateEntry.Caption = "Add New Feed With Current Values" Then
     If Len(txtURL.Text) < 11 Or Len(txtFeedString.Text) < 1 Or _
     Len(txtFeedString.Text) < 1 Then
 
-        If Len(txtCacheLocation.Text) < 1 Then flashBackColor FrmFeed.txtCacheLocation
-        If Len(txtFeedString.Text) < 1 Then flashBackColor FrmFeed.txtFeedString
-        If Len(txtURL.Text) < 11 Then flashBackColor FrmFeed.txtURL
+        If Len(txtCacheLocation.Text) < 1 Then flashBackColor frmFeed.txtCacheLocation
+        If Len(txtFeedString.Text) < 1 Then flashBackColor frmFeed.txtFeedString
+        If Len(txtURL.Text) < 11 Then flashBackColor frmFeed.txtURL
         Exit Sub
     End If
     If IsNumeric(txtIntelColumn) And IsNumeric(txtDescColumn) Then
         Form1.dictCSVFeed.Item(feedName) = txtIntelColumn.Text & "|" & txtDescColumn.Text
     ElseIf chkCSV.Value = 1 Then
-        If Len(txtIntelColumn.Text) < 1 Then flashBackColor FrmFeed.txtIntelColumn
-        If Len(txtDescColumn.Text) < 1 Then flashBackColor FrmFeed.txtDescColumn
+        If Len(txtIntelColumn.Text) < 1 Then flashBackColor frmFeed.txtIntelColumn
+        If Len(txtDescColumn.Text) < 1 Then flashBackColor frmFeed.txtDescColumn
         Exit Sub
     End If
     ReadFeedlist "\cache\intel\" & txtCacheLocation.Text & "|" & txtAgeLimit, pipeArray, False, True, False 'populating both args will save to dict
@@ -425,8 +425,8 @@ ElseIf lstFeed.ListIndex <> -1 Then
         If IsNumeric(txtIntelColumn) And IsNumeric(txtDescColumn) Then
             Form1.dictCSVFeed.Item(feedName) = txtIntelColumn.Text & "|" & txtDescColumn.Text
         Else
-            If Len(txtIntelColumn.Text) < 1 Then flashBackColor FrmFeed.txtIntelColumn
-            If Len(txtDescColumn.Text) < 1 Then flashBackColor FrmFeed.txtDescColumn
+            If Len(txtIntelColumn.Text) < 1 Then flashBackColor frmFeed.txtIntelColumn
+            If Len(txtDescColumn.Text) < 1 Then flashBackColor frmFeed.txtDescColumn
             Exit Sub
         End If
     End If
@@ -629,8 +629,9 @@ ElseIf pipeArray <> "" Then 'store values
     feedEntryArray = Split(pipeArray, "|")
     FeedDisplay = feedEntryArray(1)
     feedName = cache2FeedName(FeedDisplay)
-    Form1.dictCSVFeed.Item(feedName) = txtIntelColumn.Text & "|" & txtDescColumn.Text
-    
+    If frmFeed.chkCSV.Value = 1 Then
+        Form1.dictCSVFeed.Item(feedName) = txtIntelColumn.Text & "|" & txtDescColumn.Text
+    End If
     
     If feedEntryArray(6) <> "" And IsNumeric(feedEntryArray(6)) Then
           FeedDisplay = FeedDisplay & "|" & feedEntryArray(6)
@@ -832,6 +833,10 @@ If txtURL.Text <> "" And txtCacheLocation.Text = "" Then
     txtCacheLocation.Text = tmpFileName
     End If
 End If
+End Sub
+
+Private Sub txtURL_Change()
+'changed, current value is blank and we are not adding anything (set to update) then change to add
 End Sub
 
 Private Sub txtURL_LostFocus()
